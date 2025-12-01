@@ -1,0 +1,99 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* Banking-inspired professional palette */
+    --background: 210 20% 98%;
+    --foreground: 215 25% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 215 25% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 215 25% 15%;
+
+    /* Primary: Deep banking blue */
+    --primary: 215 85% 35%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Secondary: Subtle gray-blue */
+    --secondary: 215 20% 93%;
+    --secondary-foreground: 215 25% 15%;
+
+    --muted: 215 20% 95%;
+    --muted-foreground: 215 15% 45%;
+
+    --accent: 215 30% 88%;
+    --accent-foreground: 215 25% 15%;
+
+    /* Risk level colors */
+    --risk-high: 0 85% 60%;
+    --risk-high-foreground: 0 0% 100%;
+    --risk-high-bg: 0 85% 97%;
+    
+    --risk-medium: 35 95% 55%;
+    --risk-medium-foreground: 0 0% 100%;
+    --risk-medium-bg: 35 95% 97%;
+    
+    --risk-low: 145 65% 45%;
+    --risk-low-foreground: 0 0% 100%;
+    --risk-low-bg: 145 65% 97%;
+
+    --destructive: 0 85% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 215 20% 88%;
+    --input: 215 20% 88%;
+    --ring: 215 85% 35%;
+
+    --radius: 0.75rem;
+
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(215 85% 35%), hsl(215 85% 45%));
+    --gradient-subtle: linear-gradient(180deg, hsl(210 20% 98%), hsl(215 20% 96%));
+    
+    /* Shadows */
+    --shadow-card: 0 2px 8px -2px hsl(215 25% 15% / 0.08);
+    --shadow-elevated: 0 8px 24px -4px hsl(215 25% 15% / 0.12);
+  }
+
+  /* Light theme only for banking dashboard */
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold tracking-tight;
+  }
+}
+
+@layer utilities {
+  .gradient-primary {
+    background: var(--gradient-primary);
+  }
+  
+  .gradient-subtle {
+    background: var(--gradient-subtle);
+  }
+  
+  .shadow-card {
+    box-shadow: var(--shadow-card);
+  }
+  
+  .shadow-elevated {
+    box-shadow: var(--shadow-elevated);
+  }
+}

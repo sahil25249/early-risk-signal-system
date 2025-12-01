@@ -1,0 +1,124 @@
+<!-- templates/upload.html -->
+{% extends "base.html" %} {% block title %}Upload Data - HDFC Early Risk
+Monitor{% endblock %} {% block extra_css %}
+<style>
+  .upload-zone {
+    border: 2px dashed var(--primary-blue);
+    border-radius: 12px;
+    padding: 3rem 2rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    background: var(--light-bg);
+    cursor: pointer;
+  }
+  .upload-zone:hover,
+  .upload-zone.dragover {
+    border-color: var(--secondary-blue);
+    background: var(--light-highlight);
+    transform: translateY(-2px);
+  }
+  .upload-zone i {
+    font-size: 4rem;
+    color: var(--primary-blue);
+    margin-bottom: 1rem;
+  }
+</style>
+{% endblock %} {% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="card shadow-sm border-0 rounded-3">
+      <div class="card-body p-5 text-center">
+        <h1 class="h3 fw-light text-primary mb-4">Early Risk Signal Upload</h1>
+        <p class="text-muted mb-4">
+          Upload your monthly customer behavior Excel file to generate
+          comprehensive risk assessments.
+        </p>
+
+        <form
+          action="{{ url_for('score') }}"
+          method="post"
+          enctype="multipart/form-data"
+          id="uploadForm"
+        >
+          <div class="upload-zone mb-4" id="dropZone">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <h5 class="mb-2 fw-semibold">
+              Drop your .xlsx file here or click to browse
+            </h5>
+            <p class="text-muted mb-0">Supports drag & drop for quick upload</p>
+            <input
+              type="file"
+              id="file"
+              name="file"
+              accept=".xlsx"
+              required
+              class="d-none"
+            />
+            <div id="fileSelected" class="mt-3 d-none">
+              <i class="fas fa-check-circle text-success me-2"></i>
+              <span id="fileName"></span> selected
+            </div>
+          </div>
+
+          <div class="alert alert-info border-0 rounded-3 mb-4">
+            <i class="fas fa-info-circle me-2"></i>
+            <strong>Expected Columns:</strong> Customer ID, Utilisation %, Avg
+            Payment Ratio, Min Due Paid Frequency, Merchant Mix Index, Cash
+            Withdrawal %, Recent Spend Change %, DPD Bucket Next Month
+            (optional).
+          </div>
+
+          <button
+            type="submit"
+            class="btn btn-primary btn-lg w-100 rounded-pill px-5 py-3 fw-semibold"
+          >
+            <i class="fas fa-rocket me-2"></i>Run Risk Engine
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} {% block extra_js %}
+<script>
+  const dropZone = document.getElementById("dropZone");
+  const fileInput = document.getElementById("file");
+  const fileSelected = document.getElementById("fileSelected");
+  const fileName = document.getElementById("fileName");
+
+  // Drag and drop handlers
+  ["dragenter", "dragover"].forEach((event) =>
+    dropZone.addEventListener(event, () => dropZone.classList.add("dragover"))
+  );
+  ["dragleave", "drop"].forEach((event) =>
+    dropZone.addEventListener(event, () =>
+      dropZone.classList.remove("dragover")
+    )
+  );
+  dropZone.addEventListener("drop", (e) => {
+    e.preventDefault();
+    const files = e.dataTransfer.files;
+    if (files.length > 0) handleFile(files[0]);
+  });
+  dropZone.addEventListener("click", () => fileInput.click());
+  fileInput.addEventListener("change", (e) => handleFile(e.target.files[0]));
+
+  function handleFile(file) {
+    if (file && file.name.endsWith(".xlsx")) {
+      fileName.textContent = file.name;
+      fileSelected.classList.remove("d-none");
+      fileInput.files = new FileList([file]); // Simplified for single file
+    } else {
+      alert("Please select a valid .xlsx file.");
+    }
+  }
+
+  function preventDefaults(e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+  ["dragenter", "dragover", "dragleave", "drop"].forEach((event) =>
+    dropZone.addEventListener(event, preventDefaults)
+  );
+</script>
+{% endblock %}
