@@ -130,9 +130,4 @@ Example files available in reports/ folder.
 👤 Author
 
 Md.Sahil
-
-
-### ⚠ Disclaimer
-
-This project is a prototype developed for educational and demonstration purposes and does not use live banking data.
 ```
