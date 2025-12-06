@@ -1,15 +1,15 @@
-# 📊 Early Risk Signal System – Credit Card Delinquency Watch
-
-> 🚨 _A proactive behavioral risk assessment system designed to identify early indicators of credit card delinquency, enabling timely intervention before default._
+#  Early Risk Signal System – Credit Card Delinquency Watch
+Credit Card Behaviour Risk & Delinquency Prediction Platform
+> The Early Risk Signal System (ERS) is a full-stack analytics platform that identifies behaviour-based early warning signals, computes risk scores, and predicts next-cycle delinquency for credit card customers.
 
 ---
 
-## 📌 Project Overview
+##  Project Overview
 
 Financial institutions typically react to **lagging indicators** (missed payments, over-limit cases), which often leads to late intervention.  
 This project focuses on **early behavioural signals**, allowing banks to **predict risk before delinquency happens**.
 
-🟢 Built as a **full-stack web application** with:
+ Built as a **full-stack web application** with:
 
 - 📁 Frontend: **React + TypeScript**
 - 🧠 Backend: **Flask (Python)**
@@ -19,56 +19,155 @@ This project focuses on **early behavioural signals**, allowing banks to **predi
 
 ---
 
-## 🎯 Key Features
+##  Key Features
 
-| Feature              | Description                     |
-| -------------------- | ------------------------------- |
-| 📤 Excel Upload      | User uploads dataset            |
-| ⚙ Risk Score & Level | Computed using behavioral logic |
-| 🔍 Risk Flags        | Shows high-risk patterns        |
-| 📑 PDF Report        | For individual customer         |
-| 🚪 Login/Logout      | Secure access                   |
-| 🌐 Dashboard UI      | Bank-style front-end            |
-| 📥 Export CSV        | For analyst usage               |
+**1. Excel Upload + Smart Sheet Detection**
+  Upload .xlsx / .xls files
+  Auto-detects the correct sheet
+  Cleans, validates, maps data
+  Runs complete risk engine
 
+**2. Behaviour & Payment Stress Scoring**
+**ERS computes:**
+  Behaviour Risk Score
+  Payment Stress Score
+  Risk Level → High / Medium / Low
+  Total Risk Flags
+  Narrative risk reasons
+
+**3. Delinquency Prediction**
+**Predicts:**
+  Delinquent_NextMonth_Flag (1/0)
+  Delinquent_NextMonth_Label (Delinquent / Not Delinquent)
+  Based on utilisation, payment behaviour, cash dependency, spend changes, etc.
+
+**4. Interactive Analytics Dashboard**
+**Includes:**
+  Risk Distribution Pie Chart
+  Delinquency Bar Chart
+**🔍 Filters:**
+  By Risk Level
+  By Delinquency
+Customer table
+Summary cards
+
+**5. Manual Risk Check Module**
+
+**Enter values manually and instantly get:**
+  Risk scores
+  Categories
+  Total flags
+  Delinquency prediction
+  Narrative summary
+
+Useful for demos & what-if modelling.
+
+**6. Detailed Customer Page + PDF Export**
+**Each customer has a rich detail page:**
+  Metrics breakdown
+  Behaviour & stress visuals
+  Delinquency outlook
+  Summary & explanations
+  Export PDF report
+**Quick actions:**
+  Schedule Review (email)
+  Contact Customer
+
+**7. Flask Backend API**
+**Endpoints:**
+  GET  /api/ping
+  POST /api/score
+  POST /api/score-manual
+  GET  /api/customer/:id
+
+**8. Modern React UI**
+**Built using:**
+  React + TypeScript
+  Tailwind CSS
+  shadcn/ui
+  Recharts
+  jsPDF
+
+Clean, minimal, banking-grade UI.
 ---
 
 ## 🛠 Tech Stack
+**Frontend**
+  React + TypeScript
+  Tailwind CSS
+  shadcn/ui
+  Recharts
+  jsPDF
 
-| Component         | Technology                                    |
-| ----------------- | --------------------------------------------- |
-| Frontend          | React (Vite), TypeScript, Tailwind, Shadcn UI |
-| Backend           | Flask, Python, Pandas, NumPy                  |
-| Report Generation | ReportLab                                     |
-| Analysis          | Jupyter Notebook                              |
-| Deployment Ready  | AWS / Docker                                  |
+**Backend**
+  Python Flask
+  Pandas
+  NumPy
+  Flask-CORS
 
 ---
 
-## 📁 Project Structure
+##  Project Structure
 
-early-risk-signal-system/
-├── backend/
-│ ├── app.py
-│ ├── risk_engine.py
-│ └── requirements.txt
+ERS-System/
+│── backend/
+│   ├── app.py
+│   ├── risk_engine.py
+│   └── requirements.txt
 │
-├── frontend/
-│ ├── src/
-│ └── package.json
-│
-├── notebook/
-│ └── risk_logic_exploration.ipynb
-│
-├── data/
-│ └── sample_input.xlsx
-│
-├── reports/
-│ └── sample_customer_report.pdf
+│── frontend/
+│   ├── src/
+│   │   ├── pages/
+│   │   │   ├── Upload.tsx
+│   │   │   ├── Results.tsx
+│   │   │   ├── ManualEntry.tsx
+│   │   │   ├── CustomerDetail.tsx
+│   │   └── components/
+│   │       ├── DashboardHeader.tsx
+│   │       ├── RiskBadge.tsx
+│   │       ├── RiskSummaryCard.tsx
+│   └── package.json
 │
 └── README.md
 
 ---
+
+## How to Run Locally
+**Backend**
+  cd backend
+  pip install -r requirements.txt
+  python app.py
+Backend runs at → http://localhost:5000
+**Frontend**
+  cd frontend
+  npm install
+  npm run dev
+Frontend runs at → http://localhost:5173
+
+---
+
+**Excel Format Requirements**
+**Required columns:**
+  Customer ID
+  Credit Limit
+  Utilisation %
+  Avg Payment Ratio
+  Min Due Paid Frequency
+  Merchant Mix Index
+  Cash Withdrawal %
+  Recent Spend Change %
+**Optional:**
+  DPD Bucket Next Month
+  Past Due Flags
+
+**CSV Export Fields**
+**Exports include:**
+  Customer ID
+  All behaviour metrics
+  Risk scores + levels
+  Total risk flags
+  Delinquency flag + label
+  Narrative summary
 
 ## 🚦 Risk Logic (Rule-Based Approach)
 
@@ -84,47 +183,10 @@ early-risk-signal-system/
 
 ---
 
-## 🚀 How to Run the Project Locally
-
-### 1️⃣ Backend (Flask)
-
-```bash
-cd backend
-python -m venv venv
-venv\Scripts\activate        # Windows
-pip install -r requirements.txt
-python app.py
-➡ Visit API: http://localhost:5000/api/ping
-
-### 2️⃣ Frontend (React)
-
-cd frontend
-npm install
-npm run dev
-➡ Open UI: http://localhost:5173
-
 🔐 Login Credentials
 | Username | Password |
 | -------- | -------- |
 | analyst  | risk123  |
-
-
-### 📊 Output Examples
-
-✔ 📍 High/Medium/Low risk summary
-✔ 🧾 PDF Report per customer (Download option)
-✔ 📈 Risk score by flag count
-✔ 📥 CSV export for further analysis
-
-Example files available in reports/ folder.
-
-### 🔍 Future Enhancements
-
-✔ ML-based anomaly detection
-✔ Auto email alert to RM team
-✔ Multi-period trend comparison
-✔ Real-time API integration
-✔ Cloud Deployment (AWS)
 
 
 👤 Author
