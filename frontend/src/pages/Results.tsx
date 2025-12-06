@@ -32,14 +32,36 @@ const Results = () => {
   const [customers, setCustomers] = useState<any[]>([]);
   const [riskCounts, setRiskCounts] = useState<RiskCounts>({});
   const [loading, setLoading] = useState(true);
-  const [riskFilter, setRiskFilter] = useState<"All" | "High" | "Medium" | "Low">("All");
+
+  // 🔹 Filter by Risk Level (High / Medium / Low / All)
+  const [riskFilter, setRiskFilter] = useState<"All" | "High" | "Medium" | "Low">(
+    "All"
+  );
+
+  // 🔹 Filter by Delinquency (All / Delinquent / Not Delinquent)
+  const [delinquencyFilter, setDelinquencyFilter] = useState<
+    "All" | "Yes" | "No"
+  >("All");
+
   const [showFilterPanel, setShowFilterPanel] = useState(false);
 
-  const filteredCustomers =
-    riskFilter === "All"
-      ? customers
-      : customers.filter((c) => c.Risk_Level === riskFilter);
+  // 🔹 Apply both filters together: Risk Level + Delinquency
+  const filteredCustomers = customers.filter((c) => {
+    // Risk filter: if "All", accept all, else match Risk_Level
+    const riskOk =
+      riskFilter === "All" ? true : c.Risk_Level === riskFilter;
 
+    // Delinquency filter using Delinquent_NextMonth_Flag from backend
+    const flag = c.Delinquent_NextMonth_Flag;
+    const delinqOk =
+      delinquencyFilter === "All"
+        ? true
+        : delinquencyFilter === "Yes"
+        ? flag === 1
+        : flag === 0; // "No"
+
+    return riskOk && delinqOk;
+  });
 
   useEffect(() => {
     try {
@@ -68,54 +90,59 @@ const Results = () => {
     }).format(value);
   };
 
+  // 🔹 Export CSV: use CURRENT FILTERED CUSTOMERS and include delinquency fields
   const handleExportCsv = () => {
-  if (!customers || customers.length === 0) return;
+    if (!filteredCustomers || filteredCustomers.length === 0) return;
 
-  // Use the currently filtered customers
-  const rows = filteredCustomers;
+    // Define columns (header label + actual field name in data)
+    const columns = [
+      { header: "Customer ID", field: "Customer ID" },
+      { header: "Risk Level", field: "Risk_Level" },
+      { header: "Behaviour Risk Score", field: "Behaviour_Risk_Score" },
+      { header: "Payment Stress Score", field: "Payment_Stress_Score" },
+      { header: "Total Risk Flags", field: "Total_Risk_flags" },
+      { header: "Credit Limit", field: "Credit Limit" },
+      { header: "Utilisation %", field: "Utilisation %" },
+      { header: "Avg Payment Ratio", field: "Avg Payment Ratio" },
+      { header: "Min Due Paid Frequency", field: "Min Due Paid Frequency" },
+      { header: "Recent Spend Change %", field: "Recent Spend Change %" },
+      { header: "Cash Withdrawal %", field: "Cash Withdrawal %" },
+      { header: "Merchant Mix Index", field: "Merchant Mix Index" },
+      { header: "DPD Bucket Next Month", field: "DPD Bucket Next Month" },
+      {
+        header: "Delinquent Next Month Flag",
+        field: "Delinquent_NextMonth_Flag",
+      },
+      {
+        header: "Delinquent Next Month Label",
+        field: "Delinquent_NextMonth_Label",
+      },
+      { header: "Risk Reasons", field: "Risk_Reasons_Text" },
+    ];
 
-  // Choose a subset of columns to export
-  const headers = [
-    "Customer ID",
-    "Risk_Level",
-    "Total_Risk_Flags",
-    "Behaviour_Risk_Score",
-    "Payment_Stress_Score",
-    "Credit Limit",
-    "Utilisation %",
-    "Avg Payment Ratio",
-    "Min Due Paid Frequency",
-    "Recent Spend Change %",
-    "Cash Withdrawal %",
-    "Merchant Mix Index",
-    "DPD Bucket Next Month",
-    "Risk_Reasons_Text",
-  ];
+    const csvHeader = columns.map((col) => col.header).join(",");
+    const csvRows = filteredCustomers.map((row) =>
+      columns
+        .map((col) => {
+          const value = row[col.field] ?? "";
+          const str = String(value).replace(/"/g, '""'); // escape double quotes
+          return `"${str}"`;
+        })
+        .join(",")
+    );
 
-  const csvHeader = headers.join(",");
-  const csvRows = rows.map((row) =>
-    headers
-      .map((h) => {
-        const value = row[h] ?? row[h.replace(/ /g, "_")] ?? "";
-        // Escape quotes/commas
-        const str = String(value).replace(/"/g, '""');
-        return `"${str}"`;
-      })
-      .join(",")
-  );
+    const csvContent = [csvHeader, ...csvRows].join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
 
-  const csvContent = [csvHeader, ...csvRows].join("\n");
-  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-  const url = URL.createObjectURL(blob);
-
-  const link = document.createElement("a");
-  link.href = url;
-  link.setAttribute("download", "early_risk_results.csv");
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  URL.revokeObjectURL(url);
-};
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", "early_risk_results.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
 
   if (!loading && customers.length === 0) {
     return (
@@ -146,7 +173,8 @@ const Results = () => {
       <DashboardHeader />
 
       <main className="container mx-auto px-6 py-8">
-        <div className="mb-8 flex items-center justify-between">
+        {/* Header row */}
+        <div className="mb-4 flex items-center justify-between">
           <div>
             <h2 className="text-3xl font-bold text-foreground mb-2">
               Risk Assessment Results
@@ -169,27 +197,56 @@ const Results = () => {
               Export
             </Button>
           </div>
+        </div>
 
-          {showFilterPanel && (
-          <div className="mb-4 flex flex-wrap gap-2">
-            <span className="text-sm text-muted-foreground self-center">
-              Filter by risk:
-            </span>
-            {["All", "High", "Medium", "Low"].map((level) => (
-              <Button
-                key={level}
-                variant={riskFilter === level ? "default" : "outline"}
-                size="sm"
-                onClick={() => setRiskFilter(level as any)}
-              >
-                {level}
-              </Button>
-            ))}
+        {/* Filter Panel */}
+        {showFilterPanel && (
+          <div className="mb-6 p-4 border rounded-lg bg-muted/30">
+            <div className="flex flex-col md:flex-row gap-4 md:items-center md:justify-between">
+              {/* Risk Filter */}
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-sm text-muted-foreground">
+                  Risk Level:
+                </span>
+                {["All", "High", "Medium", "Low"].map((level) => (
+                  <Button
+                    key={level}
+                    variant={riskFilter === level ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setRiskFilter(level as any)}
+                  >
+                    {level}
+                  </Button>
+                ))}
+              </div>
+
+              {/* Delinquency Filter */}
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-sm text-muted-foreground">
+                  Delinquency:
+                </span>
+                {[
+                  { key: "All", label: "All" },
+                  { key: "Yes", label: "Delinquent" },
+                  { key: "No", label: "Not Delinquent" },
+                ].map((item) => (
+                  <Button
+                    key={item.key}
+                    variant={
+                      delinquencyFilter === item.key ? "default" : "outline"
+                    }
+                    size="sm"
+                    onClick={() =>
+                      setDelinquencyFilter(item.key as "All" | "Yes" | "No")
+                    }
+                  >
+                    {item.label}
+                  </Button>
+                ))}
+              </div>
+            </div>
           </div>
         )}
-
-
-        </div>
 
         {/* Risk Summary Cards */}
         <div className="grid gap-6 md:grid-cols-3 mb-8">
@@ -217,6 +274,9 @@ const Results = () => {
                       Behaviour Score
                     </TableHead>
                     <TableHead className="font-semibold">
+                      Delinquent Next Month
+                    </TableHead>
+                    <TableHead className="font-semibold">
                       Credit Limit
                     </TableHead>
                     <TableHead className="font-semibold">
@@ -233,6 +293,7 @@ const Results = () => {
                       key={customer["Customer ID"]}
                       className="hover:bg-muted/30"
                     >
+                      {/* Customer info cell */}
                       <TableCell>
                         <div>
                           <div className="font-medium text-foreground">
@@ -244,10 +305,12 @@ const Results = () => {
                         </div>
                       </TableCell>
 
+                      {/* Risk Level */}
                       <TableCell>
                         <RiskBadge level={customer.Risk_Level} size="sm" />
                       </TableCell>
 
+                      {/* Behaviour Risk Score */}
                       <TableCell>
                         <div className="font-mono text-sm">
                           {typeof customer.Behaviour_Risk_Score === "number"
@@ -256,16 +319,31 @@ const Results = () => {
                         </div>
                       </TableCell>
 
+                      {/* Delinquency cell */}
+                      <TableCell>
+                        {customer.Delinquent_NextMonth_Flag === 1 ? (
+                          <span className="text-sm font-semibold text-red-600">
+                            Yes (Delinquent)
+                          </span>
+                        ) : (
+                          <span className="text-sm text-muted-foreground">
+                            No
+                          </span>
+                        )}
+                      </TableCell>
+
+                      {/* Credit limit cell */}
                       <TableCell>
                         <div className="font-semibold">
                           {formatCurrency(customer["Credit Limit"])}
                         </div>
                       </TableCell>
 
+                      {/* Total Risk Flags */}
                       <TableCell>
                         <div className="flex items-center gap-2">
                           <span className="text-sm font-medium">
-                            {customer.Total_Risk_Flags}
+                            {customer.Total_Risk_flags}
                           </span>
                           <span className="text-xs text-muted-foreground">
                             flags
@@ -273,6 +351,7 @@ const Results = () => {
                         </div>
                       </TableCell>
 
+                      {/* Actions */}
                       <TableCell className="text-right">
                         <Link to={`/customer/${customer["Customer ID"]}`}>
                           <Button

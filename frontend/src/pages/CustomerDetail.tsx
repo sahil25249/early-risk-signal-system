@@ -14,7 +14,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { ArrowLeft, TrendingDown, TrendingUp, AlertCircle, CreditCard } from "lucide-react";
+import {
+  ArrowLeft,
+  TrendingDown,
+  TrendingUp,
+  AlertCircle,
+  CreditCard,
+} from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 
 type Customer = any;
@@ -52,8 +58,17 @@ const CustomerDetail = () => {
     }).format(value);
   };
 
-    const handleScheduleReview = () => {
+  // Small helper: calculate delinquency status text once
+  const getDelinquencyLabel = (c: Customer | null) => {
+    if (!c) return "Unknown";
+    return c.Delinquent_NextMonth_Flag === 1 ? "Yes (Delinquent)" : "No";
+  };
+
+  const handleScheduleReview = () => {
     if (!customer) return;
+
+    const isDelinquent =
+      customer.Delinquent_NextMonth_Flag === 1;
 
     const subject = encodeURIComponent(
       `Schedule risk review – Customer ${customer["Customer ID"]}`
@@ -66,9 +81,17 @@ const CustomerDetail = () => {
       `Risk Level: ${customer.Risk_Level}`,
       `Behaviour Risk Score: ${customer.Behaviour_Risk_Score}`,
       `Payment Stress Score: ${customer.Payment_Stress_Score}`,
+      `Delinquent Next Month: ${
+        isDelinquent ? "Yes (based on DPD > 0)" : "No (currently not delinquent)"
+      }`,
+      `Next Month DPD Bucket: ${customer["DPD Bucket Next Month"]}`,
       ``,
       `Key Risk Reasons:`,
       `${customer.Risk_Reasons_Text}`,
+      ``,
+      isDelinquent
+        ? `Priority: HIGH – please schedule review within the next 7 days.`
+        : `Priority: NORMAL – proactive review recommended.`,
       ``,
       `Generated via Early Risk Signal System.`,
     ];
@@ -85,11 +108,10 @@ const CustomerDetail = () => {
     // A4 portrait
     const doc = new jsPDF("p", "mm", "a4");
 
-    const primary: [number, number, number] = [25, 118, 210];  // blue
-    const danger: [number, number, number] = [211, 47, 47];    // red
-    const warning: [number, number, number] = [245, 124, 0];   // orange
-    const success: [number, number, number] = [46, 125, 50];   // green
-
+    const primary: [number, number, number] = [25, 118, 210]; // blue
+    const danger: [number, number, number] = [211, 47, 47]; // red
+    const warning: [number, number, number] = [245, 124, 0]; // orange
+    const success: [number, number, number] = [46, 125, 50]; // green
 
     // ===== Header band =====
     doc.setFillColor(primary[0], primary[1], primary[2]);
@@ -127,6 +149,9 @@ const CustomerDetail = () => {
     doc.setFontSize(12);
     doc.text("Customer Overview", 14, 44);
 
+    const isDelinquent =
+      customer.Delinquent_NextMonth_Flag === 1;
+
     autoTable(doc, {
       startY: 48,
       theme: "grid",
@@ -144,6 +169,10 @@ const CustomerDetail = () => {
         ["Payment Stress Score", customer.Payment_Stress_Score],
         ["Total Risk Flags", customer.Total_Risk_Flags],
         ["Next Month DPD Bucket", customer["DPD Bucket Next Month"]],
+        [
+          "Delinquent Next Month",
+          isDelinquent ? "Yes (DPD > 0)" : "No (DPD = 0)",
+        ],
       ],
     });
 
@@ -153,26 +182,28 @@ const CustomerDetail = () => {
     doc.text("Behaviour & Usage Metrics", 14, afterOverviewY);
 
     autoTable(doc, {
-    startY: afterOverviewY + 4,
-    theme: "grid",
-    styles: { fontSize: 10 },
-    headStyles: {
-      fillColor: primary,
-      textColor: 255,
-      halign: "left",
-    },
-    head: [["Metric", "Value"]],
-    body: [
-      ["Credit Limit", `Rs.${Number(customer["Credit Limit"]).toLocaleString("en-IN")}`],
-      ["Utilisation %", `${customer["Utilisation %"]}%`],
-      ["Avg Payment Ratio", `${customer["Avg Payment Ratio"]}%`],
-      ["Min Due Paid Frequency", `${customer["Min Due Paid Frequency"]}%`],
-      ["Recent Spend Change %", `${customer["Recent Spend Change %"]}%`],
-      ["Cash Withdrawal %", `${customer["Cash Withdrawal %"]}%`],
-      ["Merchant Mix Index", String(customer["Merchant Mix Index"])],
-    ],
-  });
-
+      startY: afterOverviewY + 4,
+      theme: "grid",
+      styles: { fontSize: 10 },
+      headStyles: {
+        fillColor: primary,
+        textColor: 255,
+        halign: "left",
+      },
+      head: [["Metric", "Value"]],
+      body: [
+        [
+          "Credit Limit",
+          `Rs.${Number(customer["Credit Limit"]).toLocaleString("en-IN")}`,
+        ],
+        ["Utilisation %", `${customer["Utilisation %"]}%`],
+        ["Avg Payment Ratio", `${customer["Avg Payment Ratio"]}%`],
+        ["Min Due Paid Frequency", `${customer["Min Due Paid Frequency"]}%`],
+        ["Recent Spend Change %", `${customer["Recent Spend Change %"]}%`],
+        ["Cash Withdrawal %", `${customer["Cash Withdrawal %"]}%`],
+        ["Merchant Mix Index", String(customer["Merchant Mix Index"])],
+      ],
+    });
 
     // ===== Risk Assessment Summary / narrative =====
     const afterMetricsY = (doc as any).lastAutoTable.finalY + 8;
@@ -191,10 +222,11 @@ const CustomerDetail = () => {
     doc.save(fileName);
   };
 
-
-
   const handleContactCustomer = () => {
     if (!customer) return;
+
+    const isDelinquent =
+      customer.Delinquent_NextMonth_Flag === 1;
 
     const subject = encodeURIComponent(
       `Customer outreach – ${customer["Customer ID"]}`
@@ -207,8 +239,17 @@ const CustomerDetail = () => {
       `Risk Level: ${customer.Risk_Level}`,
       `Behaviour Risk Score: ${customer.Behaviour_Risk_Score}`,
       `Payment Stress Score: ${customer.Payment_Stress_Score}`,
+      `Delinquent Next Month: ${
+        isDelinquent ? "Yes (based on upcoming DPD > 0)" : "No"
+      }`,
+      `Next Month DPD Bucket: ${customer["DPD Bucket Next Month"]}`,
       ``,
-      `Suggested tone: supportive, early-intervention call (not hard collections).`,
+      `Risk Reasons:`,
+      `${customer.Risk_Reasons_Text}`,
+      ``,
+      isDelinquent
+        ? `Suggested approach: HIGH priority remedial call – focus on missed payment resolution and support.`
+        : `Suggested approach: Proactive education – encourage responsible usage and early warning engagement.`,
       ``,
       `Generated via Early Risk Signal System.`,
     ];
@@ -245,7 +286,9 @@ const CustomerDetail = () => {
       <div className="min-h-screen bg-background">
         <DashboardHeader />
         <main className="container mx-auto px-6 py-12">
-          <p className="text-center text-muted-foreground">Loading customer details…</p>
+          <p className="text-center text-muted-foreground">
+            Loading customer details…
+          </p>
         </main>
       </div>
     );
@@ -275,6 +318,15 @@ const CustomerDetail = () => {
               <p className="text-muted-foreground">
                 Utilisation: {customer["Utilisation %"]}% | Credit Limit:{" "}
                 {formatCurrency(customer["Credit Limit"])}
+              </p>
+              {/* Delinquency status */}
+              <p className="text-sm mt-1">
+                Delinquent Next Month:{" "}
+                {customer.Delinquent_NextMonth_Flag === 1 ? (
+                  <span className="font-semibold text-red-600">Yes</span>
+                ) : (
+                  <span className="text-green-600 font-medium">No</span>
+                )}
               </p>
             </div>
             <RiskBadge level={customer.Risk_Level} size="lg" />
@@ -366,13 +418,23 @@ const CustomerDetail = () => {
             <CardContent>
               <div className="space-y-1 text-sm">
                 <p>
-                  <span className="font-medium text-muted-foreground">
+                  <span className="text-muted-foreground font-medium">
                     Next Month DPD Bucket:
                   </span>{" "}
-                  <span className="font-bold">{customer["DPD Bucket Next Month"]}</span>
+                  <span className="font-bold">
+                    {customer["DPD Bucket Next Month"]}
+                  </span>
                 </p>
                 <p>
-                  <span className="font-medium text-muted-foreground">
+                  <span className="text-muted-foreground font-medium">
+                    Delinquent Next Month:
+                  </span>{" "}
+                  <span className="font-bold">
+                    {getDelinquencyLabel(customer)}
+                  </span>
+                </p>
+                <p>
+                  <span className="text-muted-foreground font-medium">
                     Recent Spend Change:
                   </span>{" "}
                   <span className="font-bold">
@@ -380,10 +442,12 @@ const CustomerDetail = () => {
                   </span>
                 </p>
                 <p>
-                  <span className="font-medium text-muted-foreground">
+                  <span className="text-muted-foreground font-medium">
                     Merchant Mix Index:
                   </span>{" "}
-                  <span className="font-bold">{customer["Merchant Mix Index"]}</span>
+                  <span className="font-bold">
+                    {customer["Merchant Mix Index"]}
+                  </span>
                 </p>
               </div>
             </CardContent>
@@ -395,7 +459,9 @@ const CustomerDetail = () => {
           <Card className="shadow-card">
             <CardHeader>
               <CardTitle>Spending & Usage Behaviour</CardTitle>
-              <CardDescription>How the customer is using the card</CardDescription>
+              <CardDescription>
+                How the customer is using the card
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3 text-sm">
               <div className="flex justify-between">
@@ -417,7 +483,9 @@ const CustomerDetail = () => {
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Min Due Paid Frequency</span>
+                <span className="text-muted-foreground">
+                  Min Due Paid Frequency
+                </span>
                 <span className="font-semibold">
                   {customer["Min Due Paid Frequency"]}%
                 </span>
@@ -428,23 +496,31 @@ const CustomerDetail = () => {
           <Card className="shadow-card">
             <CardHeader>
               <CardTitle>Cash & Transaction Patterns</CardTitle>
-              <CardDescription>Early risk signals from recent activity</CardDescription>
+              <CardDescription>
+                Early risk signals from recent activity
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3 text-sm">
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Recent Spend Change</span>
+                <span className="text-muted-foreground">
+                  Recent Spend Change
+                </span>
                 <span className="font-semibold">
                   {customer["Recent Spend Change %"]}%
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Cash Withdrawal %</span>
+                <span className="text-muted-foreground">
+                  Cash Withdrawal %
+                </span>
                 <span className="font-semibold">
                   {customer["Cash Withdrawal %"]}%
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Merchant Mix Index</span>
+                <span className="text-muted-foreground">
+                  Merchant Mix Index
+                </span>
                 <span className="font-semibold">
                   {customer["Merchant Mix Index"]}
                 </span>
@@ -474,7 +550,6 @@ const CustomerDetail = () => {
             </div>
           </CardContent>
         </Card>
-
       </main>
     </div>
   );

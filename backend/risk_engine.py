@@ -117,5 +117,17 @@ def run_risk_engine(df_input: pd.DataFrame) -> pd.DataFrame:
         return ", ".join(reasons) if reasons else "Stable behaviour"
 
     df['Risk_Reasons_Text'] = df.apply(get_risk_reasons, axis=1)
+    
+    # Delinquency (Next Month) Flag
+    # If DPD Bucket Next Month > 0 → considered delinquent in next cycle
+    if "DPD Bucket Next Month" in df.columns:
+        df["Delinquent_NextMonth_Flag"] = (df["DPD Bucket Next Month"] > 0).astype(int)
+        df["Delinquent_NextMonth_Label"] = df["Delinquent_NextMonth_Flag"].map(
+            {1: "Delinquent Next Month", 0: "Not Delinquent Next Month"}
+        )
+    else:
+        # If column missing (e.g., manual input without DPD), default to non-delinquent
+        df["Delinquent_NextMonth_Flag"] = 0
+        df["Delinquent_NextMonth_Label"] = "Not Delinquent Next Month"
 
     return df
