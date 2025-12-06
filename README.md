@@ -22,93 +22,120 @@ This project focuses on **early behavioural signals**, allowing banks to **predi
 ##  Key Features
 
 **1. Excel Upload + Smart Sheet Detection**
+```text
   Upload .xlsx / .xls files
   Auto-detects the correct sheet
   Cleans, validates, maps data
   Runs complete risk engine
-
+```
 **2. Behaviour & Payment Stress Scoring**
+
 **ERS computes:**
+```text
   Behaviour Risk Score
   Payment Stress Score
   Risk Level → High / Medium / Low
   Total Risk Flags
   Narrative risk reasons
-
+```
 **3. Delinquency Prediction**
+
 **Predicts:**
+```text
   Delinquent_NextMonth_Flag (1/0)
   Delinquent_NextMonth_Label (Delinquent / Not Delinquent)
   Based on utilisation, payment behaviour, cash dependency, spend changes, etc.
+```
 
 **4. Interactive Analytics Dashboard**
+
 **Includes:**
+```text
   Risk Distribution Pie Chart
   Delinquency Bar Chart
+```
 **🔍 Filters:**
+```text
   By Risk Level
   By Delinquency
+```
 Customer table
 Summary cards
+
 
 **5. Manual Risk Check Module**
 
 **Enter values manually and instantly get:**
+```text
   Risk scores
   Categories
   Total flags
   Delinquency prediction
   Narrative summary
-
+```
 Useful for demos & what-if modelling.
 
 **6. Detailed Customer Page + PDF Export**
 **Each customer has a rich detail page:**
+```text
   Metrics breakdown
   Behaviour & stress visuals
   Delinquency outlook
   Summary & explanations
   Export PDF report
+```
+
 **Quick actions:**
+  ```text
   Schedule Review (email)
   Contact Customer
+```
 
 **7. Flask Backend API**
 **Endpoints:**
+  ```text
   GET  /api/ping
   POST /api/score
   POST /api/score-manual
   GET  /api/customer/:id
+```
 
 **8. Modern React UI**
 **Built using:**
+```text
   React + TypeScript
   Tailwind CSS
   shadcn/ui
   Recharts
   jsPDF
+```
 
 Clean, minimal, banking-grade UI.
+
 ---
 
 ## 🛠 Tech Stack
 **Frontend**
+```text
   React + TypeScript
   Tailwind CSS
   shadcn/ui
   Recharts
   jsPDF
-
+```
 **Backend**
+```
   Python Flask
   Pandas
   NumPy
   Flask-CORS
-
+```
 ---
 
-##  Project Structure
+````md
+##  📂Project Structure
 
+```text
 ERS-System/
 │── backend/
 │   ├── app.py
@@ -131,17 +158,24 @@ ERS-System/
 └── README.md
 
 ---
+````md
+## ▶️How to Run Locally
 
-## How to Run Locally
-**Backend**
+###Backend
+ ```bash
   cd backend
   pip install -r requirements.txt
   python app.py
+````
 Backend runs at → http://localhost:5000
-**Frontend**
+
+---
+###Frontend
+ ```bash
   cd frontend
   npm install
   npm run dev
+```
 Frontend runs at → http://localhost:5173
 
 ---
