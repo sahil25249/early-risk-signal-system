@@ -1,43 +1,71 @@
-import { Building2, LogOut } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Building2 } from "lucide-react";
+import { Link, NavLink, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
 export const DashboardHeader = () => {
-  const navigate = useNavigate();
+  const location = useLocation();
+
+  const navItems = [
+    { label: "Home", path: "/" },
+    { label: "Upload", path: "/upload" },
+    { label: "Manual Check", path: "/manual" },
+    { label: "Results", path: "/results" },
+  ];
 
   const handleLogout = () => {
-    localStorage.removeItem("isAuthenticated"); // Clear login session
-    navigate("/login"); // Redirect to login page
+    localStorage.removeItem("isAuthenticated");
+    window.location.href = "/login";
   };
 
   return (
-    <header className="border-b bg-card shadow-card">
-      <div className="container mx-auto px-6 py-4">
-        <div className="flex items-center justify-between">
-          
-          {/* Logo + Title - Left Side */}
-          <Link to="/" className="flex items-center gap-3 group">
-            <div className="p-2 rounded-lg bg-primary group-hover:scale-105 transition-transform">
-              <Building2 className="h-6 w-6 text-primary-foreground" />
-            </div>
-            <div>
-              <h1 className="text-xl font-bold text-foreground">Risk Assessment Portal</h1>
-              <p className="text-xs text-muted-foreground">Customer Financial Risk Dashboard</p>
-            </div>
-          </Link>
+    <header className="border-b bg-card/80 backdrop-blur shadow-sm">
+      <div className="container mx-auto px-6 py-3 flex items-center justify-between gap-6">
+        {/* Logo + title */}
+        <Link to="/" className="flex items-center gap-3 group">
+          <div className="p-2 rounded-xl bg-primary group-hover:scale-105 transition-transform">
+            <Building2 className="h-7 w-7 text-primary-foreground" />
+          </div>
+          <div className="leading-tight">
+            <h1 className="text-lg font-bold text-foreground">
+              Early Risk Signal System
+            </h1>
+            <p className="text-[11px] text-muted-foreground">
+              Behaviour-based Delinquency Watch
+            </p>
+          </div>
+        </Link>
 
-          {/* Logout Button - Right Side */}
-          {localStorage.getItem("isAuthenticated") === "true" && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleLogout}
-              className="flex items-center gap-2"
-            >
-              <LogOut className="h-4 w-4" />
-              Logout
-            </Button>
-          )}
+        {/* Navigation + logout */}
+        <div className="flex items-center gap-4">
+          <nav className="hidden md:flex items-center gap-2">
+            {navItems.map((item) => {
+              const isActive = location.pathname === item.path;
+              return (
+                <NavLink key={item.path} to={item.path}>
+                  <Button
+                    variant={isActive ? "default" : "ghost"}
+                    size="sm"
+                    className={
+                      isActive
+                        ? "font-semibold"
+                        : "text-muted-foreground hover:text-foreground"
+                    }
+                  >
+                    {item.label}
+                  </Button>
+                </NavLink>
+              );
+            })}
+          </nav>
+
+          <Button
+            variant="outline"
+            size="sm"
+            className="text-xs md:text-sm"
+            onClick={handleLogout}
+          >
+            Logout
+          </Button>
         </div>
       </div>
     </header>

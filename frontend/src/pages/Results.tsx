@@ -6,6 +6,18 @@ import { RiskSummaryCard } from "@/components/RiskSummaryCard";
 import { RiskBadge } from "@/components/RiskBadge";
 import { Button } from "@/components/ui/button";
 import {
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip as ReTooltip,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  ResponsiveContainer,
+} from "recharts";
+
+import {
   Card,
   CardContent,
   CardDescription,
@@ -33,32 +45,31 @@ const Results = () => {
   const [riskCounts, setRiskCounts] = useState<RiskCounts>({});
   const [loading, setLoading] = useState(true);
 
-  // 🔹 Filter by Risk Level (High / Medium / Low / All)
+  // Filter by Risk Level (High / Medium / Low / All)
   const [riskFilter, setRiskFilter] = useState<"All" | "High" | "Medium" | "Low">(
     "All"
   );
 
-  // 🔹 Filter by Delinquency (All / Delinquent / Not Delinquent)
+  // Filter by Delinquency (All / Delinquent / Not Delinquent)
   const [delinquencyFilter, setDelinquencyFilter] = useState<
     "All" | "Yes" | "No"
   >("All");
 
   const [showFilterPanel, setShowFilterPanel] = useState(false);
 
-  // 🔹 Apply both filters together: Risk Level + Delinquency
+  // Apply both filters together: Risk Level + Delinquency
   const filteredCustomers = customers.filter((c) => {
-    // Risk filter: if "All", accept all, else match Risk_Level
-    const riskOk =
-      riskFilter === "All" ? true : c.Risk_Level === riskFilter;
+    // Risk filter
+    const riskOk = riskFilter === "All" ? true : c.Risk_Level === riskFilter;
 
-    // Delinquency filter using Delinquent_NextMonth_Flag from backend
+    // Delinquency filter using Delinquent_NextMonth_Flag
     const flag = c.Delinquent_NextMonth_Flag;
     const delinqOk =
       delinquencyFilter === "All"
         ? true
         : delinquencyFilter === "Yes"
         ? flag === 1
-        : flag === 0; // "No"
+        : flag === 0;
 
     return riskOk && delinqOk;
   });
@@ -90,17 +101,16 @@ const Results = () => {
     }).format(value);
   };
 
-  // 🔹 Export CSV: use CURRENT FILTERED CUSTOMERS and include delinquency fields
+  // Export CSV using CURRENT FILTERED CUSTOMERS
   const handleExportCsv = () => {
     if (!filteredCustomers || filteredCustomers.length === 0) return;
 
-    // Define columns (header label + actual field name in data)
     const columns = [
       { header: "Customer ID", field: "Customer ID" },
       { header: "Risk Level", field: "Risk_Level" },
       { header: "Behaviour Risk Score", field: "Behaviour_Risk_Score" },
       { header: "Payment Stress Score", field: "Payment_Stress_Score" },
-      { header: "Total Risk Flags", field: "Total_Risk_flags" },
+      { header: "Total Risk Flags", field: "Total_Risk_Flags" },
       { header: "Credit Limit", field: "Credit Limit" },
       { header: "Utilisation %", field: "Utilisation %" },
       { header: "Avg Payment Ratio", field: "Avg Payment Ratio" },
@@ -125,7 +135,7 @@ const Results = () => {
       columns
         .map((col) => {
           const value = row[col.field] ?? "";
-          const str = String(value).replace(/"/g, '""'); // escape double quotes
+          const str = String(value).replace(/"/g, '""');
           return `"${str}"`;
         })
         .join(",")
@@ -248,6 +258,79 @@ const Results = () => {
           </div>
         )}
 
+        {/* -------------------- DASHBOARD INSIGHTS (CHARTS) -------------------- */}
+        <div className="grid gap-6 md:grid-cols-2 mb-10">
+          {/* Pie Chart: Risk Distribution */}
+          <Card className="shadow-card">
+            <CardHeader>
+              <CardTitle>Risk Distribution</CardTitle>
+              <CardDescription>
+                High / Medium / Low risk customers
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="h-64">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={[
+                      { name: "High", value: riskCounts.High || 0 },
+                      { name: "Medium", value: riskCounts.Medium || 0 },
+                      { name: "Low", value: riskCounts.Low || 0 },
+                    ]}
+                    dataKey="value"
+                    nameKey="name"
+                    outerRadius={90}
+                    label
+                  >
+                    <Cell fill="#d32f2f" />
+                    <Cell fill="#f57c00" />
+                    <Cell fill="#2e7d32" />
+                  </Pie>
+                  <ReTooltip />
+                </PieChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+
+          {/* Bar Chart: Delinquency */}
+          <Card className="shadow-card">
+            <CardHeader>
+              <CardTitle>Delinquency Overview</CardTitle>
+              <CardDescription>
+                Customers predicted delinquent next cycle
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="h-64">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={[
+                    {
+                      name: "Delinquent",
+                      count: customers.filter(
+                        (c) => c.Delinquent_NextMonth_Flag === 1
+                      ).length,
+                    },
+                    {
+                      name: "Not Delinquent",
+                      count: customers.filter(
+                        (c) => c.Delinquent_NextMonth_Flag === 0
+                      ).length,
+                    },
+                  ]}
+                >
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Bar dataKey="count">
+                    <Cell fill="#d32f2f" />
+                    <Cell fill="#2e7d32" />
+                  </Bar>
+                  <ReTooltip />
+                </BarChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+        </div>
+
         {/* Risk Summary Cards */}
         <div className="grid gap-6 md:grid-cols-3 mb-8">
           <RiskSummaryCard level="High" count={riskCounts.High || 0} />
@@ -293,7 +376,7 @@ const Results = () => {
                       key={customer["Customer ID"]}
                       className="hover:bg-muted/30"
                     >
-                      {/* Customer info cell */}
+                      {/* Customer info */}
                       <TableCell>
                         <div>
                           <div className="font-medium text-foreground">
@@ -310,7 +393,7 @@ const Results = () => {
                         <RiskBadge level={customer.Risk_Level} size="sm" />
                       </TableCell>
 
-                      {/* Behaviour Risk Score */}
+                      {/* Behaviour Score */}
                       <TableCell>
                         <div className="font-mono text-sm">
                           {typeof customer.Behaviour_Risk_Score === "number"
@@ -319,7 +402,7 @@ const Results = () => {
                         </div>
                       </TableCell>
 
-                      {/* Delinquency cell */}
+                      {/* Delinquency */}
                       <TableCell>
                         {customer.Delinquent_NextMonth_Flag === 1 ? (
                           <span className="text-sm font-semibold text-red-600">
@@ -332,7 +415,7 @@ const Results = () => {
                         )}
                       </TableCell>
 
-                      {/* Credit limit cell */}
+                      {/* Credit Limit */}
                       <TableCell>
                         <div className="font-semibold">
                           {formatCurrency(customer["Credit Limit"])}
@@ -343,7 +426,7 @@ const Results = () => {
                       <TableCell>
                         <div className="flex items-center gap-2">
                           <span className="text-sm font-medium">
-                            {customer.Total_Risk_flags}
+                            {customer.Total_Risk_Flags}
                           </span>
                           <span className="text-xs text-muted-foreground">
                             flags

@@ -10,14 +10,17 @@ import {
 } from "react-router-dom";
 
 import Login from "./pages/Login";
+import Home from "./pages/Home";
 import Upload from "./pages/Upload";
 import Results from "./pages/Results";
 import CustomerDetail from "./pages/CustomerDetail";
 import NotFound from "./pages/NotFound";
+import ManualEntry from "./pages/ManualEntry";
+
 
 const queryClient = new QueryClient();
 
-// Simple demo auth check
+// Simple localStorage-based auth check
 const isAuthenticated = () => localStorage.getItem("isAuthenticated") === "true";
 
 const RequireAuth = ({ children }: { children: JSX.Element }) => {
@@ -42,10 +45,19 @@ const App = () => (
             path="/"
             element={
               <RequireAuth>
+                <Home />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/upload"
+            element={
+              <RequireAuth>
                 <Upload />
               </RequireAuth>
             }
           />
+
           <Route
             path="/results"
             element={
@@ -62,7 +74,14 @@ const App = () => (
               </RequireAuth>
             }
           />
-
+          <Route
+            path="/manual" 
+            element={
+              <RequireAuth>
+                <ManualEntry />
+              </RequireAuth>
+            }
+          />
           {/* 404 – also behind auth so random URLs still require login */}
           <Route
             path="*"

@@ -4,7 +4,7 @@ export interface Customer {
   "Customer ID": string;
   "Customer Name": string;
   "Risk_Level": "High" | "Medium" | "Low";
-  "Total_Risk_flags": number;
+  "Total_Risk_Flags": number;
   "Behaviour_Risk_Score": number;
   "Behaviour_Risk_Category": "High" | "Medium" | "Low";
   "Payment_Stress_Score": number;
@@ -23,7 +23,7 @@ export const mockCustomers: Customer[] = [
     "Customer ID": "CUST001",
     "Customer Name": "Sarah Johnson",
     "Risk_Level": "High",
-    "Total_Risk_flags": 5,
+    "Total_Risk_Flags": 5,
     "Behaviour_Risk_Score": 82,
     "Behaviour_Risk_Category": "High",
     "Payment_Stress_Score": 78,
@@ -40,7 +40,7 @@ export const mockCustomers: Customer[] = [
     "Customer ID": "CUST002",
     "Customer Name": "Michael Chen",
     "Risk_Level": "Low",
-    "Total_Risk_flags": 0,
+    "Total_Risk_Flags": 0,
     "Behaviour_Risk_Score": 15,
     "Behaviour_Risk_Category": "Low",
     "Payment_Stress_Score": 12,
@@ -57,7 +57,7 @@ export const mockCustomers: Customer[] = [
     "Customer ID": "CUST003",
     "Customer Name": "Emily Rodriguez",
     "Risk_Level": "Medium",
-    "Total_Risk_flags": 2,
+    "Total_Risk_Flags": 2,
     "Behaviour_Risk_Score": 48,
     "Behaviour_Risk_Category": "Medium",
     "Payment_Stress_Score": 52,
@@ -74,7 +74,7 @@ export const mockCustomers: Customer[] = [
     "Customer ID": "CUST004",
     "Customer Name": "David Thompson",
     "Risk_Level": "Low",
-    "Total_Risk_flags": 1,
+    "Total_Risk_Flags": 1,
     "Behaviour_Risk_Score": 22,
     "Behaviour_Risk_Category": "Low",
     "Payment_Stress_Score": 25,
@@ -91,7 +91,7 @@ export const mockCustomers: Customer[] = [
     "Customer ID": "CUST005",
     "Customer Name": "Lisa Anderson",
     "Risk_Level": "High",
-    "Total_Risk_flags": 4,
+    "Total_Risk_Flags": 4,
     "Behaviour_Risk_Score": 75,
     "Behaviour_Risk_Category": "High",
     "Payment_Stress_Score": 71,
@@ -108,7 +108,7 @@ export const mockCustomers: Customer[] = [
     "Customer ID": "CUST006",
     "Customer Name": "James Wilson",
     "Risk_Level": "Medium",
-    "Total_Risk_flags": 3,
+    "Total_Risk_Flags": 3,
     "Behaviour_Risk_Score": 55,
     "Behaviour_Risk_Category": "Medium",
     "Payment_Stress_Score": 48,

@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { DashboardHeader } from "@/components/DashboardHeader";
 import { Upload as UploadIcon, FileSpreadsheet } from "lucide-react";
 import { toast } from "sonner";
+import { Link } from "react-router-dom";
 import { scoreFile, type RiskCounts } from "@/lib/api";  // <-- updated path
 
 const Upload = () => {
@@ -125,6 +126,15 @@ const Upload = () => {
                   <li>• Credit Score, Late Payments, Account Age</li>
                 </ul>
               </div>
+              {/* Manual Entry Link */}
+              <div className="mt-4 text-center text-xs text-muted-foreground">
+              Or{" "}
+              <Link to="/manual" className="text-primary underline font-medium">
+                try a Manual Risk Check
+              </Link>{" "}
+              for a single customer profile.
+            </div>
+
             </CardContent>
           </Card>
         </div>

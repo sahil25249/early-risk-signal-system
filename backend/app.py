@@ -102,6 +102,77 @@ def api_customer_detail(cust_id):
     customer = row.to_dict(orient="records")[0]
     return jsonify(customer)
 
+@app.route("/api/score-manual", methods=["POST"])
+def api_score_manual():
+    """
+    Score a single manually-entered customer.
+    Expects JSON with fields in a friendly format, e.g.:
+    {
+      "credit_limit": 120000,
+      "utilisation_pct": 75,
+      "avg_payment_ratio": 40,
+      "min_due_paid_frequency": 80,
+      "merchant_mix_index": 0.7,
+      "cash_withdrawal_pct": 15,
+      "recent_spend_change_pct": -10
+    }
+    """
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "No JSON body received"}), 400
+
+    # Map from incoming keys to engine's expected column names
+    col_map = {
+        "credit_limit": "Credit Limit",
+        "utilisation_pct": "Utilisation %",
+        "avg_payment_ratio": "Avg Payment Ratio",
+        "min_due_paid_frequency": "Min Due Paid Frequency",
+        "merchant_mix_index": "Merchant Mix Index",
+        "cash_withdrawal_pct": "Cash Withdrawal %",
+        "recent_spend_change_pct": "Recent Spend Change %",
+    }
+
+    # Create DataFrame with one row
+    df = pd.DataFrame([data])
+
+    # Rename columns to match existing engine
+    df = df.rename(columns=col_map)
+
+    # Ensure all required columns exist (fill missing with 0 or sensible defaults)
+    required_cols = [
+        "Credit Limit",
+        "Utilisation %",
+        "Avg Payment Ratio",
+        "Min Due Paid Frequency",
+        "Merchant Mix Index",
+        "Cash Withdrawal %",
+        "Recent Spend Change %",
+    ]
+    for col in required_cols:
+        if col not in df.columns:
+            df[col] = 0
+
+    # For manual entry, we do NOT have actual DPD, so set as 0 by default
+    df["DPD Bucket Next Month"] = 0
+
+    # Run the same risk engine
+    scored_df = run_risk_engine(df)
+    
+     # For consistency with /api/score, compute risk_counts here
+    risk_counts = {
+        "High": int((scored_df["Risk_Level"] == "High").sum()),
+        "Medium": int((scored_df["Risk_Level"] == "Medium").sum()),
+        "Low": int((scored_df["Risk_Level"] == "Low").sum()),
+    }
+
+    # Single record → convert row to dict
+    row = scored_df.iloc[0].to_dict()
+
+    return jsonify({
+        "customer": row,
+        "risk_counts": risk_counts
+    })
+
 
 if __name__ == "__main__":
     app.run(debug=True)

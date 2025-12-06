@@ -168,13 +168,14 @@ const CustomerDetail = () => {
         ["Behaviour Risk Score", customer.Behaviour_Risk_Score],
         ["Payment Stress Score", customer.Payment_Stress_Score],
         ["Total Risk Flags", customer.Total_Risk_Flags],
-        ["Next Month DPD Bucket", customer["DPD Bucket Next Month"]],
         [
           "Delinquent Next Month",
-          isDelinquent ? "Yes (DPD > 0)" : "No (DPD = 0)",
+          customer.Delinquent_NextMonth_Flag === 1 ? "Yes (Delinquent)" : "No",
         ],
+        ["Next Month DPD Bucket", customer["DPD Bucket Next Month"]],
       ],
     });
+
 
     // ===== Behaviour & Usage Metrics =====
     const afterOverviewY = (doc as any).lastAutoTable.finalY + 8;
