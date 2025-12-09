@@ -258,11 +258,15 @@ Expected output:
 - Cash Withdrawal %
 - Recent Spend Change %
   <br>
-  **Optional:**
+
+**Optional:**
+
 - DPD Bucket Next Month
 - Past Due Flags
   <br>
-  **Exports include:**
+
+**Exports include:**
+
 - Customer ID
 - All behaviour metrics
 - Risk scores + levels
