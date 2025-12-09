@@ -262,44 +262,44 @@ Expected output:
 
 **Excel Format Requirements**
 **Required columns:**
-Customer ID
-Credit Limit
-Utilisation %
-Avg Payment Ratio
-Min Due Paid Frequency
-Merchant Mix Index
-Cash Withdrawal %
-Recent Spend Change %
-**Optional:**
-DPD Bucket Next Month
-Past Due Flags
-**Exports include:**
-Customer ID
-All behaviour metrics
-Risk scores + levels
-Total risk flags
-Delinquency flag + label
-Narrative summary
+
+- Customer ID
+- Credit Limit
+- Utilisation %
+- Avg Payment Ratio
+- Min Due Paid Frequency
+- Merchant Mix Index
+- Cash Withdrawal %
+- Recent Spend Change %
+  **Optional:**
+- DPD Bucket Next Month
+- Past Due Flags
+  **Exports include:**
+- Customer ID
+- All behaviour metrics
+- Risk scores + levels
+- Total risk flags
+- Delinquency flag + label
+- Narrative summary
 
 ## Troubleshooting
 
-```text
-❌ NumPy/Pandas Installation Error
+### ❌ NumPy/Pandas Installation Error
+
 Use Python 3.11 only.
 
-❌ Excel Not Loading
+### ❌ Excel Not Loading
 
 Ensure the file is .xlsx and contains:
-  Customer ID
-  Credit Limit
-  Utilisation %
-  Min Due Paid Frequency
-  Avg Payment Ratio
-  Merchant Mix Index
-  Cash Withdrawal %
-  Recent Spend Change %
 
-```
+- Customer ID
+- Credit Limit
+- Utilisation %
+- Min Due Paid Frequency
+- Avg Payment Ratio
+- Merchant Mix Index
+- Cash Withdrawal %
+- Recent Spend Change %
 
 ## 🚦 Risk Logic (Rule-Based Approach)
 
@@ -320,21 +320,6 @@ Ensure the file is .xlsx and contains:
 | -------- | -------- |
 | analyst | risk123 |
 
-## Conclusion
-
-ERS is a complete end-to-end behaviour-based delinquency prediction system built with:
-
-```text
-  Strong backend scoring logic
-  Beautiful interactive UI
-  Explainable insights
-  Analyst-friendly workflows
-```
-
 👤 Author
 
 Md.Sahil
-
-```
-
-```
