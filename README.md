@@ -1,15 +1,19 @@
-#  Early Risk Signal System – Credit Card Delinquency Watch
+# 🚀 ERS – Early Risk Signal System
+
+### _Behaviour-Based Credit Card Delinquency Watch_
+
 Credit Card Behaviour Risk & Delinquency Prediction Platform
+
 > The Early Risk Signal System (ERS) is a full-stack analytics platform that identifies behaviour-based early warning signals, computes risk scores, and predicts next-cycle delinquency for credit card customers.
 
 ---
 
-##  Project Overview
+## Project Overview
 
 Financial institutions typically react to **lagging indicators** (missed payments, over-limit cases), which often leads to late intervention.  
 This project focuses on **early behavioural signals**, allowing banks to **predict risk before delinquency happens**.
 
- Built as a **full-stack web application** with:
+Built as a **full-stack web application** with:
 
 - 📁 Frontend: **React + TypeScript**
 - 🧠 Backend: **Flask (Python)**
@@ -19,18 +23,21 @@ This project focuses on **early behavioural signals**, allowing banks to **predi
 
 ---
 
-##  Key Features
+## Key Features
 
 **1. Excel Upload + Smart Sheet Detection**
+
 ```text
   Upload .xlsx / .xls files
   Auto-detects the correct sheet
   Cleans, validates, maps data
   Runs complete risk engine
 ```
+
 **2. Behaviour & Payment Stress Scoring**
 
 **ERS computes:**
+
 ```text
   Behaviour Risk Score
   Payment Stress Score
@@ -38,9 +45,11 @@ This project focuses on **early behavioural signals**, allowing banks to **predi
   Total Risk Flags
   Narrative risk reasons
 ```
+
 **3. Delinquency Prediction**
 
 **Predicts:**
+
 ```text
   Delinquent_NextMonth_Flag (1/0)
   Delinquent_NextMonth_Label (Delinquent / Not Delinquent)
@@ -50,22 +59,26 @@ This project focuses on **early behavioural signals**, allowing banks to **predi
 **4. Interactive Analytics Dashboard**
 
 **Includes:**
+
 ```text
   Risk Distribution Pie Chart
   Delinquency Bar Chart
 ```
+
 **🔍 Filters:**
+
 ```text
   By Risk Level
   By Delinquency
 ```
+
 Customer table
 Summary cards
-
 
 **5. Manual Risk Check Module**
 
 **Enter values manually and instantly get:**
+
 ```text
   Risk scores
   Categories
@@ -73,10 +86,12 @@ Summary cards
   Delinquency prediction
   Narrative summary
 ```
+
 Useful for demos & what-if modelling.
 
 **6. Detailed Customer Page + PDF Export**
 **Each customer has a rich detail page:**
+
 ```text
   Metrics breakdown
   Behaviour & stress visuals
@@ -86,22 +101,25 @@ Useful for demos & what-if modelling.
 ```
 
 **Quick actions:**
-  ```text
-  Schedule Review (email)
-  Contact Customer
+
+```text
+Schedule Review (email)
+Contact Customer
 ```
 
 **7. Flask Backend API**
 **Endpoints:**
-  ```text
-  GET  /api/ping
-  POST /api/score
-  POST /api/score-manual
-  GET  /api/customer/:id
+
+```text
+GET  /api/ping
+POST /api/score
+POST /api/score-manual
+GET  /api/customer/:id
 ```
 
 **8. Modern React UI**
 **Built using:**
+
 ```text
   React + TypeScript
   Tailwind CSS
@@ -110,30 +128,62 @@ Useful for demos & what-if modelling.
   jsPDF
 ```
 
-Clean, minimal, banking-grade UI.
+---
+
+## 🧠 How It Works (System Flow)
+
+1. User uploads customer behaviour data.
+2. Backend reads and processes the data (Pandas).
+3. Risk Engine computes:
+   - Behaviour Risk Score
+   - Payment Stress Score
+   - Total flags
+   - Delinquency Next Month
+4. Results displayed in frontend dashboard.
+5. Manual Entry module allows individual risk simulations.
 
 ---
 
-## 🛠 Tech Stack
-**Frontend**
-```text
-  React + TypeScript
-  Tailwind CSS
-  shadcn/ui
-  Recharts
-  jsPDF
-```
-**Backend**
-```
-  Python Flask
-  Pandas
-  NumPy
-  Flask-CORS
-```
+## 📸 Screenshots
+
 ---
 
-````md
-##  📂Project Structure
+## 🎥 Demo Video
+
+(Recommended for mentors)
+
+Upload to:
+
+- Google Drive
+- YouTube (Unlisted)
+
+Then paste the link below:
+
+`▶️ Demo Video: https://your-link-here`
+
+---
+
+## 🛠️ Tech Stack
+
+### **Frontend**
+
+- React + Vite
+- TypeScript
+- TailwindCSS
+- ShadCN
+- Recharts
+
+### **Backend**
+
+- Python **3.11.x**
+- Flask
+- Pandas
+- NumPy
+- OpenPyXL
+
+---
+
+## 📂Project Structure
 
 ```text
 ERS-System/
@@ -157,51 +207,99 @@ ERS-System/
 │
 └── README.md
 
----
-````md
-## ▶️How to Run Locally
-
-###Backend
- ```bash
-  cd backend
-  pip install -r requirements.txt
-  python app.py
-````
-Backend runs at → http://localhost:5000
-
----
-###Frontend
- ```bash
-  cd frontend
-  npm install
-  npm run dev
 ```
-Frontend runs at → http://localhost:5173
 
 ---
+
+## ▶️ How to run the Project Locally
+
+### 1️⃣ Backend Setup
+
+```bash
+cd backend
+python3.11 -m venv venv
+venv\Scripts\activate (Windows)
+source venv/bin/activate (Mac/Linux)
+
+pip install -r requirements.txt
+python app.py
+```
+
+```text
+Backend runs at:
+http://localhost:5000
+```
+
+### 2️⃣ Frontend Setup
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+```text
+Frontend runs at:
+http://localhost:5173
+
+```
+
+### 🧪 API Test
+
+Open browser:
+
+```bash
+http://localhost:5000/ping
+
+```
+
+Expected output:
+
+```bash
+{"message": "alive"}
+
+```
 
 **Excel Format Requirements**
 **Required columns:**
+Customer ID
+Credit Limit
+Utilisation %
+Avg Payment Ratio
+Min Due Paid Frequency
+Merchant Mix Index
+Cash Withdrawal %
+Recent Spend Change %
+**Optional:**
+DPD Bucket Next Month
+Past Due Flags
+**Exports include:**
+Customer ID
+All behaviour metrics
+Risk scores + levels
+Total risk flags
+Delinquency flag + label
+Narrative summary
+
+## Troubleshooting
+
+```text
+❌ NumPy/Pandas Installation Error
+Use Python 3.11 only.
+
+❌ Excel Not Loading
+
+Ensure the file is .xlsx and contains:
   Customer ID
   Credit Limit
   Utilisation %
-  Avg Payment Ratio
   Min Due Paid Frequency
+  Avg Payment Ratio
   Merchant Mix Index
   Cash Withdrawal %
   Recent Spend Change %
-**Optional:**
-  DPD Bucket Next Month
-  Past Due Flags
 
-**CSV Export Fields**
-**Exports include:**
-  Customer ID
-  All behaviour metrics
-  Risk scores + levels
-  Total risk flags
-  Delinquency flag + label
-  Narrative summary
+```
 
 ## 🚦 Risk Logic (Rule-Based Approach)
 
@@ -220,10 +318,23 @@ Frontend runs at → http://localhost:5173
 🔐 Login Credentials
 | Username | Password |
 | -------- | -------- |
-| analyst  | risk123  |
+| analyst | risk123 |
 
+## Conclusion
+
+ERS is a complete end-to-end behaviour-based delinquency prediction system built with:
+
+```text
+  Strong backend scoring logic
+  Beautiful interactive UI
+  Explainable insights
+  Analyst-friendly workflows
+```
 
 👤 Author
 
 Md.Sahil
+
+```
+
 ```
