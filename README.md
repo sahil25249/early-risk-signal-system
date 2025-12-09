@@ -87,8 +87,6 @@ Summary cards
   Narrative summary
 ```
 
-Useful for demos & what-if modelling.
-
 **6. Detailed Customer Page + PDF Export**
 **Each customer has a rich detail page:**
 
@@ -144,22 +142,9 @@ GET  /api/customer/:id
 
 ---
 
-## 📸 Screenshots
-
----
-
 ## 🎥 Demo Video
 
-(Recommended for mentors)
-
-Upload to:
-
-- Google Drive
-- YouTube (Unlisted)
-
-Then paste the link below:
-
-`▶️ Demo Video: https://your-link-here`
+`▶️ Video Link: https://drive.google.com/file/d/1zM2A4TZTa3DJqaPKgRJWnFFaBwu01sbf/view?usp=drive_link`
 
 ---
 
@@ -186,6 +171,7 @@ Then paste the link below:
 ## 📂Project Structure
 
 ```text
+
 ERS-System/
 │── backend/
 │   ├── app.py
