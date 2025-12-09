@@ -257,9 +257,11 @@ Expected output:
 - Merchant Mix Index
 - Cash Withdrawal %
 - Recent Spend Change %
+  <br>
   **Optional:**
 - DPD Bucket Next Month
 - Past Due Flags
+  <br>
   **Exports include:**
 - Customer ID
 - All behaviour metrics
