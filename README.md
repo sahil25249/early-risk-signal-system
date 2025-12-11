@@ -148,6 +148,12 @@ GET  /api/customer/:id
 
 ---
 
+### Live Application
+You can access the deployed Early Risk Signal System here:  
+🔗 https://early-risk-signal-system.netlify.app/login
+
+---
+
 ## 🛠️ Tech Stack
 
 ### **Frontend**
