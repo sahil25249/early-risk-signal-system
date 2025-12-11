@@ -1,9 +1,10 @@
 import { Building2 } from "lucide-react";
-import { Link, NavLink, useLocation } from "react-router-dom";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
 export const DashboardHeader = () => {
   const location = useLocation();
+  const navigate = useNavigate();
 
   const navItems = [
     { label: "Home", path: "/" },
@@ -14,7 +15,8 @@ export const DashboardHeader = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("isAuthenticated");
-    window.location.href = "/login";
+    navigate("/login", { replace: true });
+    // window.location.href = "/login";
   };
 
   return (
